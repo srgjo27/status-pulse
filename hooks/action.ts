@@ -76,3 +76,13 @@ export async function createMonitor(formData: FormData) {
 
   return { success: true };
 }
+
+export async function deleteMonitor(id: number) {
+  const { error } = await supabase.from("monitors").delete().eq("id", id);
+
+  if (error) return { error: "Failed to delete monitor." };
+
+  revalidatePath("/");
+
+  return { success: true };
+}

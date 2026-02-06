@@ -3,6 +3,7 @@
 import { checkMonitor } from "@/hooks/action";
 import { Monitor } from "@/types/monitor";
 import { CheckCircle2, Clock, Globe, Play, XCircle } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 type MonitorProps = {
@@ -41,7 +42,9 @@ export default function MonitorCard({ monitor }: MonitorProps) {
         </div>
       </div>
 
-      <h3 className="font-semibold text-lg">{monitor.name}</h3>
+      <Link href={`/monitor/${monitor.id}`} className="hover:underline">
+        <h3 className="font-semibold text-lg">{monitor.name}</h3>
+      </Link>
       <a
         href={monitor.url}
         target="_blank"

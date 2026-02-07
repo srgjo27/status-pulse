@@ -1,4 +1,5 @@
 import { supabase } from "@/app/supabase";
+import { sendDiscordAlert } from "@/utils/discord";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ export async function GET(request: Request) {
   const results = await Promise.all(
     monitors.map(async (monitor) => {
       const startTime = performance.now();
-      let status = "DOWN";
+      let newStatus = "DOWN";
       let httpCode = 0;
       let latency = 0;
 
@@ -33,14 +34,25 @@ export async function GET(request: Request) {
         });
 
         httpCode = response.status;
-        if (response.ok) status = "UP";
+        if (response.ok) newStatus = "UP";
       } catch (error) {
         httpCode = 500;
-        status = "DOWN";
+        newStatus = "DOWN";
       }
 
       const endTime = performance.now();
       latency = Math.round(endTime - startTime);
+
+      if (monitor.status === "UP" && newStatus === "DOWN") {
+        const alertSent = await sendDiscordAlert(
+          monitor.name,
+          monitor.url,
+          `Status Code: ${httpCode}`,
+        );
+        console.log(
+          `Alert for ${monitor.name}: ${alertSent ? "Sent" : "Failed"}`,
+        );
+      }
 
       await supabase.from("pings").insert({
         monitor_id: monitor.id,
@@ -50,13 +62,13 @@ export async function GET(request: Request) {
 
       await supabase
         .from("monitors")
-        .update({ status: status, last_checked: new Date().toISOString() })
+        .update({ status: newStatus, last_checked: new Date().toISOString() })
         .eq("id", monitor.id);
 
       return {
         id: monitor.id,
         url: monitor.url,
-        status,
+        status: newStatus,
         latency,
       };
     }),

@@ -5,18 +5,17 @@
 
 import { config } from "dotenv";
 
-// Load environment variables
 config({ path: ".env.local" });
 
 async function testCronJob() {
   const cronSecret = process.env.CRON_SECRET;
 
   if (!cronSecret) {
-    console.error("❌ Error: CRON_SECRET tidak ditemukan di .env.local!");
+    console.error("Error: CRON_SECRET tidak ditemukan di .env.local!");
     process.exit(1);
   }
 
-  console.log("🔄 Triggering cron job...\n");
+  console.log("Triggering cron job...\n");
 
   try {
     const response = await fetch("http://localhost:3000/api/cron", {
@@ -28,18 +27,18 @@ async function testCronJob() {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`❌ Request failed with status ${response.status}`);
+      console.error(`Request failed with status ${response.status}`);
       console.error(`Response: ${errorText}`);
       process.exit(1);
     }
 
     const data = await response.json();
-    console.log("✅ Cron job berhasil dijalankan!\n");
-    console.log("📊 Results:");
+    console.log("Cron job berhasil dijalankan!\n");
+    console.log("Results:");
     console.log(`   - Monitors checked: ${data.checked}`);
 
     if (data.results && data.results.length > 0) {
-      console.log("\n📋 Monitor Status:");
+      console.log("\nMonitor Status:");
       data.results.forEach((result: any) => {
         const statusEmoji = result.status === "UP" ? "🟢" : "🔴";
         console.log(`   ${statusEmoji} ${result.url}`);
@@ -49,7 +48,7 @@ async function testCronJob() {
       });
     }
 
-    console.log("\n💡 Tips:");
+    console.log("\nTips:");
     console.log(
       "- Cek Discord channel Anda untuk alert (jika ada monitor yang DOWN)",
     );
@@ -57,8 +56,8 @@ async function testCronJob() {
       "- Lihat dashboard di http://localhost:3000 untuk status terbaru",
     );
   } catch (error: any) {
-    console.error("❌ Error:", error.message);
-    console.log("\n💡 Pastikan:");
+    console.error("Error:", error.message);
+    console.log("\nPastikan:");
     console.log("- Development server berjalan (npm run dev)");
     console.log("- Database Supabase sudah dikonfigurasi");
     console.log("- Ada monitor aktif di database");

@@ -15,22 +15,22 @@ export async function sendDiscordAlert(
     avatar_url: "",
     embeds: [
       {
-        title: "🚨 SERVICE DOWN ALERT",
+        title: "SERVICE DOWN ALERT",
         description: `Monitor **${monitorName}** is failing!`,
-        color: 15158332, // Red color
+        color: 15158332,
         fields: [
           {
-            name: "🌐 Target URL",
+            name: "Target URL",
             value: url,
             inline: false,
           },
           {
-            name: "❌ Error",
+            name: "Error",
             value: reason,
             inline: true,
           },
           {
-            name: "🕐 Time",
+            name: "Time",
             value: new Date().toLocaleString("en-US", {
               timeZone: "UTC",
               dateStyle: "full",
@@ -57,18 +57,12 @@ export async function sendDiscordAlert(
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(
-        `Discord webhook failed with status ${response.status}:`,
-        errorText,
-      );
+      await response.text();
       return false;
     }
 
-    console.log(`✅ Discord alert sent successfully for ${monitorName}`);
     return true;
   } catch (error) {
-    console.error("Failed to send Discord alert:", error);
     return false;
   }
 }

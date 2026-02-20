@@ -6,23 +6,21 @@
 import { config } from "dotenv";
 import { sendDiscordAlert } from "./utils/discord";
 
-// Load environment variables dari .env.local
 config({ path: ".env.local" });
 
 async function testDiscordAlert() {
-  // Validasi webhook URL tersedia
   if (!process.env.DISCORD_WEBHOOK_URL) {
-    console.error("❌ Error: DISCORD_WEBHOOK_URL tidak ditemukan!");
-    console.log("\n💡 Pastikan file .env.local ada dan berisi:");
+    console.error("Error: DISCORD_WEBHOOK_URL tidak ditemukan!");
+    console.log("\nPastikan file .env.local ada dan berisi:");
     console.log("DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...\n");
     process.exit(1);
   }
 
-  console.log("✅ Discord webhook URL ditemukan");
+  console.log("Discord webhook URL ditemukan");
   console.log(
-    `📍 Webhook: ${process.env.DISCORD_WEBHOOK_URL.substring(0, 50)}...`,
+    `Webhook: ${process.env.DISCORD_WEBHOOK_URL.substring(0, 50)}...`,
   );
-  console.log("\n🧪 Testing Discord Alert...\n");
+  console.log("\nTesting Discord Alert...\n");
 
   // Test 1: Alert dengan status code error
   console.log("Test 1: Sending alert with 500 error...");
@@ -31,7 +29,7 @@ async function testDiscordAlert() {
     "https://example.com",
     "Status Code: 500",
   );
-  console.log(`Result: ${result1 ? "✅ Success" : "❌ Failed"}\n`);
+  console.log(`Result: ${result1 ? "Success" : "Failed"}\n`);
 
   // Wait 2 seconds before next test
   await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -43,7 +41,7 @@ async function testDiscordAlert() {
     "https://api.example.com/health",
     "Status Code: 0 (Timeout)",
   );
-  console.log(`Result: ${result2 ? "✅ Success" : "❌ Failed"}\n`);
+  console.log(`Result: ${result2 ? "Success" : "Failed"}\n`);
 
   // Wait 2 seconds before next test
   await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -55,10 +53,10 @@ async function testDiscordAlert() {
     "https://db.example.com",
     "Connection Refused",
   );
-  console.log(`Result: ${result3 ? "✅ Success" : "❌ Failed"}\n`);
+  console.log(`Result: ${result3 ? "Success" : "Failed"}\n`);
 
   console.log("🏁 Test completed!");
-  console.log("\n💡 Tips:");
+  console.log("\nTips:");
   console.log("- Check your Discord channel for the alerts");
   console.log(
     "- If no alerts appear, check DISCORD_WEBHOOK_URL in your .env.local",
@@ -66,5 +64,4 @@ async function testDiscordAlert() {
   console.log("- Verify the webhook is still active in Discord settings");
 }
 
-// Run the test
 testDiscordAlert().catch(console.error);

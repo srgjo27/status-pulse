@@ -6,14 +6,10 @@ import AddMonitor from "@/components/AddMonitor";
 export const revalidate = 0;
 
 export default async function Home() {
-  const { data: monitors, error } = await supabase
+  const { data: monitors } = await supabase
     .from("monitors")
     .select("*")
     .order("id", { ascending: true });
-
-  if (error) {
-    console.log("Error fetching monitors:", error);
-  }
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 p-8">
